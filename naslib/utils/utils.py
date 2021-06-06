@@ -137,6 +137,9 @@ def get_config_from_args(args=None, config_type='nas'):
 
     if args is None:
         args = parse_args()
+    else:
+        parser = default_argument_parser()
+        args = parser.parse_args(args)
     print(args)
     logger.info("Command line args: {}".format(args))
 
@@ -166,8 +169,8 @@ def get_config_from_args(args=None, config_type='nas'):
         config.merge_from_file(args.config_file)
         config.merge_from_list(args.opts)
     except AttributeError:
-        for arg, value in pairwise(args):
-            config[arg] = value
+        with open(args[1]) as f:
+            config = CfgNode.load_cfg(f)
 
 
     # prepare the output directories
